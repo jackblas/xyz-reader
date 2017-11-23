@@ -4,35 +4,35 @@ import android.app.Fragment;
 import android.app.LoaderManager;
 import android.content.Intent;
 import android.content.Loader;
+import android.content.res.Configuration;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.Rect;
-import android.graphics.Typeface;
 import android.graphics.drawable.ColorDrawable;
-
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.GregorianCalendar;
-
 import android.os.Bundle;
 import android.support.v4.app.ShareCompat;
-import android.support.v7.graphics.Palette;
 import android.text.Html;
 import android.text.format.DateUtils;
 import android.text.method.LinkMovementMethod;
+import android.transition.Slide;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
+import android.view.animation.AnimationUtils;
 import android.widget.TextView;
 
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.ImageLoader;
 import com.example.xyzreader.R;
 import com.example.xyzreader.data.ArticleLoader;
+
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.GregorianCalendar;
 
 /**
  * A fragment representing a single Article detail screen. This fragment is
@@ -56,7 +56,7 @@ public class ArticleDetailFragment extends Fragment implements
 
     private int mTopInset;
     private View mPhotoContainerView;
-    private ImageView mPhotoView;
+    private DynamicHeightNetworkImageView mPhotoView;
     private int mScrollY;
     private boolean mIsCard = false;
     private int mStatusBarFullOpacityBottom;
@@ -94,6 +94,7 @@ public class ArticleDetailFragment extends Fragment implements
         mStatusBarFullOpacityBottom = getResources().getDimensionPixelSize(
                 R.dimen.detail_card_top_margin);
         setHasOptionsMenu(true);
+
     }
 
     public ArticleDetailActivity getActivityCast() {
@@ -109,6 +110,7 @@ public class ArticleDetailFragment extends Fragment implements
         // fragments because their mIndex is -1 (haven't been added to the activity yet). Thus,
         // we do this in onActivityCreated.
         getLoaderManager().initLoader(0, null, this);
+
     }
 
     @Override
@@ -135,7 +137,15 @@ public class ArticleDetailFragment extends Fragment implements
             }
         });
 
-        mPhotoView = (ImageView) mRootView.findViewById(R.id.photo);
+        mPhotoView = (DynamicHeightNetworkImageView) mRootView.findViewById(R.id.photo);
+
+        //JB: Change image aspect ratio for better presentation in landscape
+        int orientation = getResources().getConfiguration().orientation;
+        if (orientation == Configuration.ORIENTATION_LANDSCAPE)
+            mPhotoView.setAspectRatio(4/1f);
+        else
+            mPhotoView.setAspectRatio(3/2f);
+
         mPhotoContainerView = mRootView.findViewById(R.id.photo_container);
 
         mStatusBarColorDrawable = new ColorDrawable(0);
@@ -152,6 +162,16 @@ public class ArticleDetailFragment extends Fragment implements
 
         bindViews();
         updateStatusBar();
+
+        //JB: Enter transition:
+        // DOESN'T WORK AS EXPECTED - UNABLE TO SCROLL ARTICLE TEXVIEW!
+        Slide slide = new Slide(Gravity.BOTTOM);
+        //slide.addTarget(R.id.scrollview);
+        slide.setInterpolator(AnimationUtils.loadInterpolator(getActivity().getBaseContext(), android.R.interpolator.linear_out_slow_in));
+        slide.setDuration(600);
+
+        getActivity().getWindow().setEnterTransition(slide);
+
         return mRootView;
     }
 
@@ -205,8 +225,8 @@ public class ArticleDetailFragment extends Fragment implements
         bylineView.setMovementMethod(new LinkMovementMethod());
         TextView bodyView = (TextView) mRootView.findViewById(R.id.article_body);
 
-
-        bodyView.setTypeface(Typeface.createFromAsset(getResources().getAssets(), "Rosario-Regular.ttf"));
+        //JB: Move all styles to xml
+        //bodyView.setTypeface(Typeface.createFromAsset(getResources().getAssets(), "Rosario-Regular.ttf"));
 
         if (mCursor != null) {
             mRootView.setAlpha(0);
@@ -232,18 +252,33 @@ public class ArticleDetailFragment extends Fragment implements
                                 + "</font>"));
 
             }
-            bodyView.setText(Html.fromHtml(mCursor.getString(ArticleLoader.Query.BODY).replaceAll("(\r\n|\n)", "<br />")));
+            //JB
+            // For better text presentation, remove line break characters but keep paragraphs spacing
+            //bodyView.setText(Html.fromHtml(mCursor.getString(ArticleLoader.Query.BODY).replaceAll("(\r\n|\n)", "<br />")));
+            String str1 = mCursor.getString(ArticleLoader.Query.BODY).replaceAll("(\r\n|\n)", "<br />");
+            //Remove only single occurrences of line break:
+            //This regex matches a <br /> that is neither preceded nor followed by a <br />.
+            String str = str1.replaceAll("(?<!<br />)<br />(?!<br />)" , "");
+            bodyView.setText(Html.fromHtml(str));
+
             ImageLoaderHelper.getInstance(getActivity()).getImageLoader()
                     .get(mCursor.getString(ArticleLoader.Query.PHOTO_URL), new ImageLoader.ImageListener() {
                         @Override
                         public void onResponse(ImageLoader.ImageContainer imageContainer, boolean b) {
                             Bitmap bitmap = imageContainer.getBitmap();
                             if (bitmap != null) {
-                                Palette p = Palette.generate(bitmap, 12);
-                                mMutedColor = p.getDarkMutedColor(0xFF333333);
-                                mPhotoView.setImageBitmap(imageContainer.getBitmap());
-                                mRootView.findViewById(R.id.meta_bar)
-                                        .setBackgroundColor(mMutedColor);
+                                //JB: Commented out since using scrim:
+                                //Palette p = Palette.generate(bitmap, 12);
+                                //mMutedColor = p.getDominantColor(0xFF333333);
+                                //mPhotoView.setImageBitmap(imageContainer.getBitmap());
+                                //JB - with new class use setImageUrl to load an image
+                                mPhotoView.setImageUrl(
+                                        mCursor.getString(ArticleLoader.Query.PHOTO_URL),
+                                        ImageLoaderHelper.getInstance(getActivity().getApplicationContext()).getImageLoader());
+
+                                //JB: Commented out since using scrim:
+                                //mRootView.findViewById(R.id.meta_bar)
+                                //        .setBackgroundColor(mMutedColor);
                                 updateStatusBar();
                             }
                         }
@@ -259,6 +294,8 @@ public class ArticleDetailFragment extends Fragment implements
             bylineView.setText("N/A" );
             bodyView.setText("N/A");
         }
+
+
     }
 
     @Override

@@ -9,4 +9,10 @@
 
     <string name="up">Up</string>
 
+    <!-- Toast and Snackbar messages -->
+    <string name="message_connection_error">Data maybe out of date. The server is not returning data.</string>
+
+    <string name="pref_connection_status_key" translatable="false">connection-status</string>
+
+
 </resources>

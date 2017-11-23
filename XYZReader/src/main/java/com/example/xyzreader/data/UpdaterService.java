@@ -3,15 +3,19 @@ package com.example.xyzreader.data;
 import android.app.IntentService;
 import android.content.ContentProviderOperation;
 import android.content.ContentValues;
+import android.content.Context;
 import android.content.Intent;
 import android.content.OperationApplicationException;
+import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.RemoteException;
+import android.preference.PreferenceManager;
 import android.text.format.Time;
 import android.util.Log;
 
+import com.example.xyzreader.R;
 import com.example.xyzreader.remote.RemoteEndpointUtil;
 
 import org.json.JSONArray;
@@ -28,6 +32,9 @@ public class UpdaterService extends IntentService {
     public static final String EXTRA_REFRESHING
             = "com.example.xyzreader.intent.extra.REFRESHING";
 
+    public static final int STATUS_CONNECTED = 0;
+    public static final int STATUS_NOT_CONNECTED = 1;
+
     public UpdaterService() {
         super(TAG);
     }
@@ -40,8 +47,22 @@ public class UpdaterService extends IntentService {
         NetworkInfo ni = cm.getActiveNetworkInfo();
         if (ni == null || !ni.isConnected()) {
             Log.w(TAG, "Not online, not refreshing.");
+            //JB: Save connectivity status
+            Context c = getApplicationContext();
+            SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(c);
+            SharedPreferences.Editor spe = sp.edit();
+            spe.putInt(c.getString(R.string.pref_connection_status_key),STATUS_NOT_CONNECTED);
+            spe.apply();
+
             return;
         }
+
+        //JB: Save connectivity status
+        Context c = getApplicationContext();
+        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(c);
+        SharedPreferences.Editor spe = sp.edit();
+        spe.putInt(c.getString(R.string.pref_connection_status_key),STATUS_CONNECTED);
+        spe.apply();
 
         sendStickyBroadcast(
                 new Intent(BROADCAST_ACTION_STATE_CHANGE).putExtra(EXTRA_REFRESHING, true));

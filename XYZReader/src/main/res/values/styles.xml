@@ -13,16 +13,59 @@
      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
      See the License for the specific language governing permissions and
      limitations under the License.
+
 -->
 
 <resources>
 
-    <style name="Theme.Bacon" parent="@style/Theme.AppCompat.Light.NoActionBar">
+    <style name="AppTheme" parent="@style/Theme.AppCompat.Light.NoActionBar">
+        <!-- Theme customization -->
+        <item name="colorPrimary">@color/light_blue_500</item>
+        <item name="colorPrimaryDark">@color/light_blue_700</item>
+        <item name="colorAccent">@color/yellow_A500</item>
+
+        <item name="contentInsetStart">@dimen/app_bar_content_inset_start</item>
+
+        <!-- enable window content transitions -->
+        <item name="android:windowActivityTransitions">true</item>
+
+        <item name="android:windowExitTransition">@transition/grid_exit</item>
 
     </style>
 
-    <style name="Theme.Bacon.Detail">
+    <style name="ExpandedTitle">
+        <item name="android:textColor">@android:color/transparent</item>
+    </style>
+
+    <style name="AppTheme.Detail" parent="AppTheme">
         <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="backButtonWidth">@dimen/back_button_width</item>
+
     </style>
+
+    <!-- Article title text -->
+    <style name="articleTitle" parent="@android:style/TextAppearance.Large">
+        <item name="android:fontFamily">sans-serif-condensed</item>
+        <item name="android:textColor">@color/white</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:paddingBottom">@dimen/detail_metabar_title_bottom_padding</item>
+    </style>
+
+    <!-- Article byline text -->
+    <style name="articleByline" parent="@android:style/TextAppearance.Small">
+        <item name="android:textColor">@color/grey_50</item>
+    </style>
+
+    <!-- Article body text -->
+    <style name="articleBody" parent="@android:style/TextAppearance.Small">
+        <item name="android:textColor">@color/grey_900</item>
+        <item name="android:layout_marginTop">@dimen/detail_inner_vert_margin</item>
+        <item name="android:layout_marginBottom">@dimen/detail_inner_vert_margin</item>
+        <item name="android:layout_marginLeft">@dimen/detail_inner_horiz_margin</item>
+        <item name="android:layout_marginRight">@dimen/detail_inner_horiz_margin</item>
+        <item name="android:lineSpacingMultiplier">@fraction/detail_body_line_spacing_multiplier</item>
+
+    </style>
+
 
 </resources>

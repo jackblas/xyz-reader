@@ -11,9 +11,12 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.net.Uri;
+import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static android.content.ContentValues.TAG;
 
 public class ItemsProvider extends ContentProvider {
 	private SQLiteOpenHelper mOpenHelper;
@@ -62,6 +65,21 @@ public class ItemsProvider extends ContentProvider {
         if (cursor != null) {
             cursor.setNotificationUri(getContext().getContentResolver(), uri);
         }
+        //JB
+		//Log.d("Cursor Object", DatabaseUtils.dumpCursorToString(cursor));
+		if (cursor.moveToFirst()) {
+			do {
+				StringBuilder sb = new StringBuilder();
+				int columnsQty = cursor.getColumnCount();
+				for (int idx=0; idx<columnsQty; ++idx) {
+					sb.append(cursor.getString(idx));
+					if (idx < columnsQty - 1)
+						sb.append("; ");
+				}
+				Log.v(TAG, String.format("Row: %d, Values: %s", cursor.getPosition(),
+						sb.toString()));
+			} while (cursor.moveToNext());
+		}
         return cursor;
 	}
 
