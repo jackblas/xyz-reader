@@ -22,7 +22,7 @@
         <!-- Theme customization -->
         <item name="colorPrimary">@color/light_blue_500</item>
         <item name="colorPrimaryDark">@color/light_blue_700</item>
-        <item name="colorAccent">@color/yellow_A500</item>
+        <item name="colorAccent">@color/yellow_A200</item>
 
         <item name="contentInsetStart">@dimen/app_bar_content_inset_start</item>
 

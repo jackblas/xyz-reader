@@ -1,3 +1,31 @@
 = XYZ Reader Starter Code
 
 This repository stores the starter code for the XYZ Reader project in Udacity's Android Nanodegree.
+
+# Project Requirements
+
+Take users feedback in the UI Review and implement changes that will improve the UI and make it conform to Material Design.
+
+# Summary of Changes
+
+1. App uses the Design Support library.
+- Added the design support library dependency in build.gradle
+- Added SnackBar to display "No network connection" message
+
+2. App uses CoordinatorLayout for the main Activity to facilitate use of collapsing AppBarLayout
+
+3. Created AppTheme that extends AppCompat. 
+- AppTheme defines consisten color theme and enables content transitions.
+- Changed FAB resting elevation to 6dp
+
+4. Modified layout and styles xml to use default Android font and font size consistent with Material Design specs.
+- Moved hard-coded dims to dimens.xml
+- Moved hard-coded styles to styles.xml
+
+5. Created Explode transition to exit from main activity using a resource file (res/transition/grid_exit.xml)
+
+6. Created Slide transition to enter the detail activity using java code (not working as expected)
+
+7. Changed ImageView attributes to properly scale the images (list_item_article.xml)
+
+8. In Details Activity, added code to set image aspect ratio depending on device orientation.

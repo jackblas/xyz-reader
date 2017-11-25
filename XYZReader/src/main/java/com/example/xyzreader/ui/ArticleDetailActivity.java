@@ -57,6 +57,9 @@ public class ArticleDetailActivity extends AppCompatActivity
                 .applyDimension(TypedValue.COMPLEX_UNIT_DIP, 1, getResources().getDisplayMetrics()));
         mPager.setPageMarginDrawable(new ColorDrawable(0x22000000));
 
+        //mPager.setPageTransformer(true, new ZoomOutPageTransformer());
+        mPager.setPageTransformer(true, new ParallaxPageTransformer());
+
         mPager.setOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
             @Override
             public void onPageScrollStateChanged(int state) {
@@ -109,7 +112,6 @@ public class ArticleDetailActivity extends AppCompatActivity
 
     @Override
     public void onBackPressed() {
-        //Log.d("JACK","onBackPressed");
         onSupportNavigateUp();
         //super.onBackPressed();
     }
@@ -184,4 +186,34 @@ public class ArticleDetailActivity extends AppCompatActivity
             return (mCursor != null) ? mCursor.getCount() : 0;
         }
     }
+
+    //Code adapted from example on Chris Basha site: https://medium.com/@BashaChris/
+    public class ParallaxPageTransformer implements ViewPager.PageTransformer {
+
+        public void transformPage(View view, float position) {
+
+            int pageWidth = view.getWidth();
+
+
+            if (position < -1) { // [-Infinity,-1)
+                // This page is way off-screen to the left.
+                view.setAlpha(1);
+
+            } else if (position <= 1) { // [-1,1]
+
+                view.findViewById(R.id.article_body).
+                setTranslationX(position * (pageWidth/2)); //Half the normal speed
+
+                //view.findViewById(R.id.share_fab).setRotation(360f);
+
+
+            } else { // (1,+Infinity]
+                // This page is way off-screen to the right.
+                view.setAlpha(1);
+            }
+
+
+        }
+    }
+
 }

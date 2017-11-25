@@ -165,8 +165,9 @@ public class ArticleDetailFragment extends Fragment implements
 
         //JB: Enter transition:
         // DOESN'T WORK AS EXPECTED - UNABLE TO SCROLL ARTICLE TEXVIEW!
-        Slide slide = new Slide(Gravity.BOTTOM);
-        //slide.addTarget(R.id.scrollview);
+        //Slide slide = new Slide(Gravity.BOTTOM);
+        Slide slide = new Slide(Gravity.RIGHT);
+        //slide.addTarget(R.id.article_body);
         slide.setInterpolator(AnimationUtils.loadInterpolator(getActivity().getBaseContext(), android.R.interpolator.linear_out_slow_in));
         slide.setDuration(600);
 

@@ -79,24 +79,23 @@
                     android:id="@+id/article_body"
                     style="@style/articleBody"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:textColorLink="?attr/colorAccent"/>
+                    android:layout_height="wrap_content"/>
 
             </com.example.xyzreader.ui.MaxWidthLinearLayout>
 
         </LinearLayout>
     </com.example.xyzreader.ui.ObservableScrollView>
 
-    <ImageButton android:id="@+id/share_fab"
-        android:stateListAnimator="@anim/fab_state_list_anim"
-        android:background="@drawable/add_fab_background"
+    <android.support.design.widget.FloatingActionButton
+        app:fabSize="normal"
+        app:elevation="@dimen/fab_elevation"
+        app:pressedTranslationZ="@dimen/fab_press_translation_z"
+        android:id="@+id/share_fab"
         android:layout_gravity="bottom|end"
-        android:layout_marginRight="@dimen/fab_margin"
-        android:layout_marginBottom="@dimen/fab_margin"
-        android:layout_width="@dimen/fab_size"
-        android:layout_height="@dimen/fab_size"
+        android:layout_margin="@dimen/fab_margin"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:src="@drawable/ic_share"
-        android:elevation="@dimen/fab_elevation"
         android:contentDescription="@string/action_share" />
 
 </com.example.xyzreader.ui.DrawInsetsFrameLayout>
