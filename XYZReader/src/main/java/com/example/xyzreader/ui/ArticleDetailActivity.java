@@ -8,13 +8,17 @@ import android.database.Cursor;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.v13.app.ActivityCompat;
 import android.support.v13.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
+import android.transition.Slide;
 import android.util.TypedValue;
+import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowInsets;
+import android.view.animation.AnimationUtils;
 
 import com.example.xyzreader.R;
 import com.example.xyzreader.data.ArticleLoader;
@@ -101,6 +105,16 @@ public class ArticleDetailActivity extends AppCompatActivity
                 }
             });
         }
+
+
+        //JB: Enter transition
+        Slide slide = new Slide(Gravity.RIGHT);
+        slide.addTarget(R.id.article_layout);
+        slide.setInterpolator(AnimationUtils.loadInterpolator(getBaseContext(), android.R.interpolator.linear_out_slow_in));
+        slide.setDuration(900);
+        getWindow().setEnterTransition(slide);
+        ActivityCompat.postponeEnterTransition(this);
+
 
         if (savedInstanceState == null) {
             if (getIntent() != null && getIntent().getData() != null) {
@@ -194,7 +208,6 @@ public class ArticleDetailActivity extends AppCompatActivity
 
             int pageWidth = view.getWidth();
 
-
             if (position < -1) { // [-Infinity,-1)
                 // This page is way off-screen to the left.
                 view.setAlpha(1);
@@ -204,14 +217,16 @@ public class ArticleDetailActivity extends AppCompatActivity
                 view.findViewById(R.id.article_body).
                 setTranslationX(position * (pageWidth/2)); //Half the normal speed
 
-                //view.findViewById(R.id.share_fab).setRotation(360f);
-
+                if (position < 0) {
+                    view.findViewById(R.id.share_fab).setRotation(360*position*2);
+                } else {
+                    view.findViewById(R.id.share_fab).setRotation(-360*position*2);
+                }
 
             } else { // (1,+Infinity]
                 // This page is way off-screen to the right.
                 view.setAlpha(1);
             }
-
 
         }
     }

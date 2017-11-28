@@ -38,7 +38,7 @@
     </style>
 
     <style name="AppTheme.Detail" parent="AppTheme">
-        <item name="android:statusBarColor">@android:color/transparent</item>
+
         <item name="backButtonWidth">@dimen/back_button_width</item>
 
     </style>

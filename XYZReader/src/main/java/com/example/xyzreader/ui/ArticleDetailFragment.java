@@ -10,18 +10,18 @@ import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.Rect;
 import android.graphics.drawable.ColorDrawable;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.ShareCompat;
+import android.support.v7.app.AppCompatActivity;
 import android.text.Html;
 import android.text.format.DateUtils;
 import android.text.method.LinkMovementMethod;
-import android.transition.Slide;
 import android.util.Log;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.AnimationUtils;
+import android.view.ViewTreeObserver;
 import android.widget.TextView;
 
 import com.android.volley.VolleyError;
@@ -127,10 +127,21 @@ public class ArticleDetailFragment extends Fragment implements
         });
 
         mScrollView = (ObservableScrollView) mRootView.findViewById(R.id.scrollview);
+        mScrollView.setNestedScrollingEnabled(true);
         mScrollView.setCallbacks(new ObservableScrollView.Callbacks() {
             @Override
             public void onScrollChanged() {
                 mScrollY = mScrollView.getScrollY();
+
+                /*
+                if (mScrollY == ((mScrollView.getChildAt(0).getMeasuredHeight()) - mScrollView.getMeasuredHeight())) {
+                    Log.e(TAG, "BOTTOM SCROLL");
+                    FloatingActionButton fab = (FloatingActionButton) mDrawInsetsFrameLayout.findViewById(R.id.share_fab);
+                    fab.setVisibility(View.VISIBLE);
+
+                }
+                */
+
                 getActivityCast().onUpButtonFloorChanged(mItemId, ArticleDetailFragment.this);
                 mPhotoContainerView.setTranslationY((int) (mScrollY - mScrollY / PARALLAX_FACTOR));
                 updateStatusBar();
@@ -162,16 +173,6 @@ public class ArticleDetailFragment extends Fragment implements
 
         bindViews();
         updateStatusBar();
-
-        //JB: Enter transition:
-        // DOESN'T WORK AS EXPECTED - UNABLE TO SCROLL ARTICLE TEXVIEW!
-        //Slide slide = new Slide(Gravity.BOTTOM);
-        Slide slide = new Slide(Gravity.RIGHT);
-        //slide.addTarget(R.id.article_body);
-        slide.setInterpolator(AnimationUtils.loadInterpolator(getActivity().getBaseContext(), android.R.interpolator.linear_out_slow_in));
-        slide.setDuration(600);
-
-        getActivity().getWindow().setEnterTransition(slide);
 
         return mRootView;
     }
@@ -296,7 +297,6 @@ public class ArticleDetailFragment extends Fragment implements
             bodyView.setText("N/A");
         }
 
-
     }
 
     @Override
@@ -321,6 +321,19 @@ public class ArticleDetailFragment extends Fragment implements
         }
 
         bindViews();
+
+        //JB: Enter transition
+        mRootView.getViewTreeObserver().addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
+            @Override
+            public boolean onPreDraw() {
+                mRootView.getViewTreeObserver().removeOnPreDrawListener(this);
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                    AppCompatActivity activity = (AppCompatActivity) getActivity();
+                    activity.supportStartPostponedEnterTransition();
+                }
+                return false;
+            }
+        });
     }
 
     @Override

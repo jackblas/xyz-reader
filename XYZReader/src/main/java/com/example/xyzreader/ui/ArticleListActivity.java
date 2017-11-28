@@ -187,6 +187,7 @@ public class ArticleListActivity extends AppCompatActivity implements
             //JB - set bundle for transition
             final Bundle bundle = ActivityOptions.makeSceneTransitionAnimation
                     (ArticleListActivity.this).toBundle();
+            //final Bundle bundle = null;
 
             view.setOnClickListener(new View.OnClickListener() {
                 @Override

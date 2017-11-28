@@ -29,3 +29,10 @@ Take users feedback in the UI Review and implement changes that will improve the
 7. Changed ImageView attributes to properly scale the images (list_item_article.xml)
 
 8. In Details Activity, added code to set image aspect ratio depending on device orientation.
+
+# Code Review Changes
+
+- FAB animation
+- Enter transition for details activity
+- Misc style or layout attrs fixes
+
